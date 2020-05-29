@@ -1,0 +1,6 @@
+[submodule "glorytun"]
+	path = glorytun
+	url = aur:glorytun
+[submodule "secret"]
+	path = secret
+	url = aur:secret
