@@ -1,15 +1,10 @@
 #!/usr/bin/env bash
 #shellcheck disable=SC1090,SC2154
 
-_latest() {
-	curl -sSf "https://api.github.com/repos/angt/$1/releases/latest" \
-		| jq -r .tag_name
-}
-
 for i in */PKGBUILD
 do [ -r "$i" ] && (
 	. "$i"
-	latest=$(_latest "$pkgname")
+	latest=$(curl -sSf "https://api.github.com/repos/angt/$pkgname/releases/latest" | jq -r .tag_name)
 	latest=${latest#v}
 	[ "$latest" ] || exit
 	[ "$latest" = "$pkgver" ] && exit
@@ -31,6 +26,9 @@ do [ -r "$i" ] && (
 		[ "$md5sums"     ] && printf "\tmd5sums = %s\n"     "${md5sums[@]}"
 		                      printf "\npkgname = %s\n"     "$pkgname"
 	) > .SRCINFO
-	git commit -sm "Update to $latest"
-	git push origin master
+	git commit -sm "Update to $latest" || exit
+	git show
+	push=
+	read -r -p "Push? (yes/no): " push
+	[ "$push" = yes ] && git push origin master
 ) done
