@@ -7,9 +7,8 @@ do [ -r "$i" ] && (
 	latest=$(curl -sSf "https://api.github.com/repos/angt/$pkgname/releases/latest" | jq -r .tag_name)
 	latest=${latest#v}
 	[ "$latest" ] || exit
-	[ "$latest" = "$pkgver" ] && exit
-	echo "Updating $pkgname to $latest"
-	sed -i "s/$pkgver/$latest/g" "$i"
+	[ "$latest" = "$pkgver" ] || sed -i "s/$pkgver/$latest/g" "$i"
+	echo " => $pkgname version $latest"
 	. "$i"
 	cd "$pkgname" || exit
 	(
