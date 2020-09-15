@@ -25,7 +25,11 @@ do [ -r "$i" ] && (
 		[ "$md5sums"     ] && printf "\tmd5sums = %s\n"     "${md5sums[@]}"
 		                      printf "\npkgname = %s\n"     "$pkgname"
 	) > .SRCINFO
-	git commit -sam "Update to $latest" || exit
+	if [ "$latest" = "$pkgver" ]; then
+		git commit -sam "Update"
+	else
+		git commit -sam "Update to $latest"
+	fi || exit
 	git show
 	push=
 	read -r -p "Push? (yes/no): " push
