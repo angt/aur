@@ -7,13 +7,11 @@ jobs:
       - checkout
       - run: |
           pacman -Syuq --noconfirm git base-devel
-          sed -i s_aur:_https://aur.archlinux.org/_ .gitmodules
-          git submodule update --init
           useradd user
           echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/user
           chown -R user /root
           for x in */PKGBUILD
-          do (
-            cd "${x%/PKGBUILD}"
+          do [ -r "$x" ] && (
+            cd "${x%/*}"
             sudo -u user makepkg -s --noconfirm
           ) done
